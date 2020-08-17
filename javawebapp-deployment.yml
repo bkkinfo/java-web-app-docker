@@ -1,35 +1,33 @@
----
-apiVersion: v1
-kind: ReplicationController
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  labels:
-    name: javawebapp
-  name: java-controller
+  name: hello-app-deploy
 spec:
+  selector:
+    matchLabels:
+      app: hello-app
   replicas: 1
   template:
     metadata:
       labels:
-        name: javawebapp
+        app: hello-app
     spec:
       containers:
-      - image: dockerhandson/java-web-app
-        name: javawebapp
+      - image: bishnukashyap/java-web-app:15
+        name: hello-app
         ports:
-        - name: javawebapp
-          containerPort: 8080  
+        - name: hello-app
+          containerPort: 6000
 ---
 # Node Port Service
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    name: javawebapp
-  name: javawebapp
+  name: hello-app-svc
 spec:
-  type: NodePort
   ports:
-    - port: 8080
-      targetPort: 8080
+    - name: helloport
+      port: 6000
+  type: LoadBalancer
   selector:
-    name: javawebapp
+    app: hello-app
