@@ -10,9 +10,17 @@ node{
       sh "${mavenCMD} clean package"
       
     } 
+    stage('SonarQube Analysis'){
+        def mavenHome = tool name: 'maven' , type: 'maven'
+        withSonarQubeEnv('sonar'){
+            sh "${mavenHome}/bin/mvn sonar:sonar -Dsonar.projectKey=sonar -Dsonar.host.url=http://13.87.153.253:9000/ananthan/sonar/ -Dsonar.login=4582750b30d9ba259d6dfad73518b4204cec3dba"
+        }
+    }
     
     
     stage('Build Docker Image'){
+        def dockerHome = tool 'docker'
+        env.PATH = "${dockerHome}/bin:${env.PATH}"
         sh 'docker build -t dockerhandson/java-web-app .'
     }
     
